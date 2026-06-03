@@ -381,7 +381,11 @@ Type <span style="color: var(--accent-1); font-weight: bold;">help</span> to see
         <div class="glass-card" style="position: relative;">
           
           <!-- Contact Form -->
-          <form class="contact-form" id="contact-form">
+          <form action="https://formsubmit.co/anchithyaprabhakar@gmail.com" method="POST" class="contact-form" id="contact-form">
+            <!-- Redirect back to the portfolio after sending -->
+            <input type="hidden" name="_next" value="https://anchithyaprabhakar-hub.github.io/Portfolio/">
+            <!-- Disable FormSubmit captcha for a seamless experience -->
+            <input type="hidden" name="_captcha" value="false">
             <div class="form-group">
               <label for="name">Your Name</label>
               <input type="text" id="name" name="name" required placeholder="John Doe">

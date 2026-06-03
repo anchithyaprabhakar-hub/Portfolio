@@ -507,39 +507,10 @@ function initContactForm() {
 
   if (!form || !overlay || !resetBtn) return;
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    // Visual loading state
+  form.addEventListener('submit', () => {
+    // Show loading state while redirecting to FormSubmit
     const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<span>Sending...</span>`;
-
-    const formData = new FormData(form);
-
-    // Send email via formsubmit.co (No sign up required)
-    fetch("https://formsubmit.co/ajax/anchithyaprabhakar@gmail.com", {
-        method: "POST",
-        body: formData,
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Show success overlay
-        overlay.classList.add('show');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        form.reset();
-    })
-    .catch(error => {
-        console.error("Form error:", error);
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        alert("Oops! Something went wrong while sending your message.");
-    });
+    submitBtn.innerHTML = `<span>Redirecting...</span>`;
   });
 
   resetBtn.addEventListener('click', () => {
