@@ -62,10 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initParticles();
   initTerminal();
   initThemeToggle();
+  initMusicToggle();
   initProjectFiltering();
   initProjectDialog();
   initContactForm();
   initScrollSpy();
+  initBackToTop();
 });
 
 /* ==========================================================================
@@ -402,6 +404,45 @@ function initThemeToggle() {
 }
 
 /* ==========================================================================
+   Music Toggle State
+   ========================================================================== */
+function initMusicToggle() {
+  const toggleBtn = document.getElementById('music-toggle');
+  const statusText = document.getElementById('music-status');
+  const bgMusic = document.getElementById('bg-music');
+  if (!toggleBtn || !statusText) return;
+
+  const setSoundState = (isOn) => {
+    toggleBtn.classList.toggle('playing', isOn);
+    toggleBtn.classList.toggle('muted', !isOn);
+    toggleBtn.setAttribute('aria-pressed', String(isOn));
+    toggleBtn.dataset.tooltip = isOn ? 'Sound on' : 'Sound off';
+    statusText.textContent = isOn ? 'Sound on' : 'Sound off';
+  };
+
+  setSoundState(false);
+
+  toggleBtn.addEventListener('click', async () => {
+    const shouldTurnOn = toggleBtn.getAttribute('aria-pressed') !== 'true';
+
+    if (bgMusic && bgMusic.querySelector('source, [src]')) {
+      if (shouldTurnOn) {
+        try {
+          await bgMusic.play();
+        } catch {
+          setSoundState(false);
+          return;
+        }
+      } else {
+        bgMusic.pause();
+      }
+    }
+
+    setSoundState(shouldTurnOn);
+  });
+}
+
+/* ==========================================================================
    Projects Grid Category Filtering
    ========================================================================== */
 function initProjectFiltering() {
@@ -544,4 +585,31 @@ function initScrollSpy() {
       }
     });
   });
+}
+
+/* ==========================================================================
+   Back to Top Button
+   ========================================================================== */
+function initBackToTop() {
+  const backToTopBtn = document.getElementById('back-to-top');
+  const backToTopControl = document.getElementById('back-to-top-control');
+  if (!backToTopBtn || !backToTopControl) return;
+
+  const toggleBackToTop = () => {
+    const shouldShow = window.scrollY > 500;
+    backToTopControl.classList.toggle('show', shouldShow);
+    backToTopControl.setAttribute('aria-hidden', String(!shouldShow));
+    backToTopBtn.tabIndex = shouldShow ? 0 : -1;
+  };
+
+  backToTopBtn.addEventListener('click', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? 'auto' : 'smooth'
+    });
+  });
+
+  window.addEventListener('scroll', toggleBackToTop, { passive: true });
+  toggleBackToTop();
 }
