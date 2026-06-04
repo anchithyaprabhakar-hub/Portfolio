@@ -355,11 +355,11 @@ Type <span style="color: var(--accent-2);">projects --details</span> or scroll d
 
       case 'contact':
         appendOutput(`Let's connect:
-* Email: <a href="mailto:anchithya@example.com" style="text-decoration: underline; color: var(--accent-2);">anchithya@example.com</a>
-* GitHub: <a href="https://github.com" target="_blank" style="text-decoration: underline; color: var(--accent-2);">github.com</a>
-* LinkedIn: <a href="https://linkedin.com" target="_blank" style="text-decoration: underline; color: var(--accent-2);">linkedin.com</a>
+* Email: <a href="mailto:anchithyaprabhakar@gmail.com" style="text-decoration: underline; color: var(--accent-2);">anchithyaprabhakar@gmail.com</a>
+* GitHub: <a href="https://github.com/anchithyaprabhakar-hub" target="_blank" rel="noopener" style="text-decoration: underline; color: var(--accent-2);">github.com/anchithyaprabhakar-hub</a>
+* LinkedIn: <a href="https://www.linkedin.com/in/anchithya-prabhakar-35bb2a2a9/" target="_blank" rel="noopener" style="text-decoration: underline; color: var(--accent-2);">linkedin.com/in/anchithya-prabhakar</a>
 
-Or use the "Let's Connect" form below to send an direct message!`);
+Or use the "Let's Connect" form below to send a direct message!`);
         break;
 
       case 'clear':
