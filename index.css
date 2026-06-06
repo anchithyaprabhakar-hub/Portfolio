@@ -1122,6 +1122,33 @@ body.light-theme .form-group textarea {
   color: var(--accent-1);
 }
 
+/* Spotify Player Section */
+.spotify-player-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: var(--card-shadow);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  max-width: 400px;
+  margin: 0 auto;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.spotify-player-container:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.light-theme .spotify-player-container:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.spotify-player-container iframe {
+  border-radius: 12px;
+}
+
 /* Footer */
 footer {
   padding: 3rem 0;
