@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initParticles();
   initTerminal();
   initThemeToggle();
+  initTimeDisplay();
   initMusicToggle();
   initProjectFiltering();
   initProjectDialog();
@@ -408,16 +409,15 @@ function initThemeToggle() {
    ========================================================================== */
 function initMusicToggle() {
   const toggleBtn = document.getElementById('music-toggle');
-  const statusText = document.getElementById('music-status');
+  const soundText = document.querySelector('.sound-text');
   const bgMusic = document.getElementById('bg-music');
-  if (!toggleBtn || !statusText) return;
+  if (!toggleBtn || !soundText) return;
 
   const setSoundState = (isOn) => {
     toggleBtn.classList.toggle('playing', isOn);
     toggleBtn.classList.toggle('muted', !isOn);
     toggleBtn.setAttribute('aria-pressed', String(isOn));
-    toggleBtn.dataset.tooltip = isOn ? 'Sound on' : 'Sound off';
-    statusText.textContent = isOn ? 'Sound on' : 'Sound off';
+    soundText.textContent = isOn ? 'SOUND: ON' : 'SOUND: OFF';
   };
 
   setSoundState(false);
@@ -440,6 +440,28 @@ function initMusicToggle() {
 
     setSoundState(shouldTurnOn);
   });
+}
+
+/* ==========================================================================
+   Time and Location Display
+   ========================================================================== */
+function initTimeDisplay() {
+  const timeDisplay = document.getElementById('time-display');
+  if (!timeDisplay) return;
+
+  const updateTime = () => {
+    const now = new Date();
+    const timeString = now.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Asia/Kolkata'
+    });
+    timeDisplay.textContent = `${timeString}, IST • Bangalore`;
+  };
+
+  updateTime();
+  setInterval(updateTime, 60000); // Update every minute
 }
 
 /* ==========================================================================

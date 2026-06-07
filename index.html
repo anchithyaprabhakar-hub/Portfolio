@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
-  <link rel="stylesheet" href="index.css?v=6">
+  <link rel="stylesheet" href="index.css?v=7">
 </head>
 <body>
   
@@ -63,24 +63,17 @@
               </svg>
             </button>
           </li>
-          <li class="music-control-item">
-            <!-- Music Toggle Button -->
-            <div class="music-control">
-              <button class="music-toggle-btn muted" id="music-toggle" aria-label="Toggle background music" aria-pressed="false" aria-describedby="music-status" data-tooltip="Sound off">
-                <!-- Equalizer bars (playing state) -->
-                <span class="music-eq" aria-hidden="true">
-                  <span class="eq-bar"></span>
-                  <span class="eq-bar"></span>
-                  <span class="eq-bar"></span>
-                  <span class="eq-bar"></span>
-                </span>
-                <!-- Mute slash line -->
-                <svg class="music-mute-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
-              <span class="music-status-text" id="music-status" aria-live="polite">Sound off</span>
+          <li>
+            <div class="time-location">
+              <span class="time-display" id="time-display">1:11 AM, IST • Bangalore</span>
             </div>
+          </li>
+          <li class="music-control-item">
+            <!-- Sound Status Display -->
+            <button class="sound-status-btn muted" id="music-toggle" aria-label="Toggle background music" aria-pressed="false">
+              <span class="sound-indicator" aria-hidden="true"></span>
+              <span class="sound-text" id="sound-text">SOUND: OFF</span>
+            </button>
           </li>
         </ul>
       </nav>
