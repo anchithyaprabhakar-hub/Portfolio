@@ -580,11 +580,18 @@ body.light-theme .terminal-widget:hover {
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
-.terminal-btn.red { background-color: oklch(25% 0 0); } /* Charcoal/Dark Grey */
-.terminal-btn.yellow { background-color: oklch(50% 0 0); } /* Medium Grey */
-.terminal-btn.green { background-color: oklch(80% 0 0); } /* Light Grey */
+.terminal-btn:hover {
+  transform: scale(1.2);
+  opacity: 0.9;
+}
+
+.terminal-btn.red { background-color: #ff5f56; } /* macOS Red */
+.terminal-btn.yellow { background-color: #ffbd2e; } /* macOS Yellow */
+.terminal-btn.green { background-color: #27c93f; } /* macOS Green */
 
 .terminal-title {
   color: var(--text-muted);
