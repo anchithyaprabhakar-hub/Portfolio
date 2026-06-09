@@ -80,7 +80,7 @@ function initCustomCursor() {
 
   let mouseX = 0, mouseY = 0;
   let cursorX = 0, cursorY = 0;
-  const speed = 0.15; // Smoothness factor
+  const speed = 0.5; // Smoothness factor - increased for responsive cursor
 
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
