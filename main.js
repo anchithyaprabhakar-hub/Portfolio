@@ -409,7 +409,7 @@ function initThemeToggle() {
    ========================================================================== */
 function initMusicToggle() {
   const toggleBtn = document.getElementById('music-toggle');
-  const soundText = document.querySelector('.sound-text');
+  const soundText = document.querySelector('.sound-label');
   const bgMusic = document.getElementById('bg-music');
   if (!toggleBtn || !soundText) return;
 
