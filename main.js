@@ -457,7 +457,7 @@ function initTimeDisplay() {
       hour12: true,
       timeZone: 'Asia/Kolkata'
     });
-    timeDisplay.textContent = `${timeString}, IST • Bangalore`;
+    timeDisplay.textContent = `${timeString} • Bangalore`;
   };
 
   updateTime();
