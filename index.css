@@ -58,7 +58,7 @@ body.light-theme {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 8rem;
   background-color: var(--bg-base);
   overscroll-behavior-y: none;
 }
