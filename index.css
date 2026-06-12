@@ -177,15 +177,13 @@ body.light-theme header {
 .nav-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
   gap: 1rem;
 
   min-height: var(--header-height);
 
-  flex-wrap: wrap;
-
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.5rem;
 }
 
 .logo {
@@ -198,21 +196,26 @@ body.light-theme header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex: 0 0 auto;
+
+  flex-shrink: 0;
+
   white-space: nowrap;
 }
 
 nav {
   min-width: 0;
+
+  display: flex;
+  align-items: center;
 }
 
 nav ul {
   display: flex;
-  list-style: none;
-  gap: clamp(0.75rem, 2vw, 1.5rem);
   align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
+
+  list-style: none;
+
+  gap: 0.8rem;
 }
 
 nav a {
