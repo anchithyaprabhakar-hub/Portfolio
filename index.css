@@ -208,26 +208,39 @@ nav ul {
 }
 
 nav a {
-  font-weight: 500;
+  height: 56px;
+  padding: 0 1.4rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.03);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  color: rgba(255,255,255,0.9);
+
   font-size: 0.95rem;
-  position: relative;
-  padding: 0.5rem 0;
+  font-weight: 600;
+
+  transition: all 0.3s ease;
 }
 
-nav a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(to right var(--in-oklch), var(--accent-1), var(--accent-2));
-  transition: width 0.3s ease;
+nav a:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.22);
+  transform: translateY(-2px);
 }
 
-nav a:hover::after,
-nav a.active::after {
-  width: 100%;
+nav a.active {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.28);
 }
 
 /* Theme Toggle Switch */
