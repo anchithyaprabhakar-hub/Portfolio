@@ -158,7 +158,10 @@ header {
   position: sticky;
   top: 0;
   width: 100%;
-  height: var(--header-height);
+  
+  min-height: var(--header-height);
+  padding: 0.5rem 0;
+
   z-index: 100;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -173,11 +176,16 @@ body.light-theme header {
 
 .nav-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
+
+  gap: 1rem;
+
   min-height: var(--header-height);
-  height: auto;
-  gap: 1rem 1.5rem;
+
+  flex-wrap: wrap;
+
+  padding: 0.6rem 1.2rem;
 }
 
 .logo {
