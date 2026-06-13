@@ -175,13 +175,12 @@ function initParticles() {
     update() {
       const intensity = window.musicData?.intensity || 1;
 
-this.x += this.vx * intensity;
-this.y += this.vy * intensity;
+      this.x += this.vx * intensity;
+      this.y += this.vy * intensity;
 
       // Bounce boundaries
       if (this.x < 0 || this.x > width) this.vx *= -1;
       if (this.y < 0 || this.y > height) this.vy *= -1;
-    }
 
       // Mouse interaction (repel)
       if (mouse.x !== null && mouse.y !== null) {
@@ -201,13 +200,13 @@ this.y += this.vy * intensity;
       ctx.beginPath();
       const intensity = window.musicData?.intensity || 1;
 
-ctx.arc(
-  this.x,
-  this.y,
-  this.radius + intensity * 0.4,
-  0,
-  Math.PI * 2
-);
+      ctx.arc(
+        this.x,
+        this.y,
+        this.radius + intensity * 0.4,
+        0,
+        Math.PI * 2
+      );
       ctx.fillStyle = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)';
       ctx.fill();
     }
@@ -435,25 +434,49 @@ function initThemeToggle() {
 /* ==========================================================================
    Music Toggle State
    ========================================================================== */
+let audioContext;
+let analyser;
+let dataArray;
+let bufferLength;
+let source;
+
 function initMusicToggle() {
   const toggleBtn = document.getElementById('music-toggle');
   const soundText = document.querySelector('.sound-label');
   const bgMusic = document.getElementById('bg-music');
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+ if (bgMusic && !window.musicData) {
 
-const analyser = audioContext.createAnalyser();
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-const source = audioContext.createMediaElementSource(bgMusic);
+  analyser = audioContext.createAnalyser();
 
-source.connect(analyser);
+  analyser.fftSize = 256;
 
-analyser.connect(audioContext.destination);
+  bufferLength = analyser.frequencyBinCount;
 
-analyser.fftSize = 256;
+  dataArray = new Uint8Array(bufferLength);
 
-const bufferLength = analyser.frequencyBinCount;
+  try {
 
-const dataArray = new Uint8Array(bufferLength);
+    source = audioContext.createMediaElementSource(bgMusic);
+
+    source.connect(analyser);
+
+    analyser.connect(audioContext.destination);
+
+  } catch (err) {
+
+    console.log('Audio source already connected');
+
+  }
+
+  window.musicData = {
+    analyser,
+    dataArray,
+    bufferLength,
+    intensity: 1
+  };
+}
 
 window.musicData = {
   analyser,
