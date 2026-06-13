@@ -173,12 +173,15 @@ function initParticles() {
     }
 
     update() {
-      this.x += this.vx;
-      this.y += this.vy;
+      const intensity = window.musicData?.intensity || 1;
+
+this.x += this.vx * intensity;
+this.y += this.vy * intensity;
 
       // Bounce boundaries
       if (this.x < 0 || this.x > width) this.vx *= -1;
       if (this.y < 0 || this.y > height) this.vy *= -1;
+    }
 
       // Mouse interaction (repel)
       if (mouse.x !== null && mouse.y !== null) {
@@ -196,7 +199,15 @@ function initParticles() {
     draw() {
       const isLight = document.body.classList.contains('light-theme');
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      const intensity = window.musicData?.intensity || 1;
+
+ctx.arc(
+  this.x,
+  this.y,
+  this.radius + intensity * 0.4,
+  0,
+  Math.PI * 2
+);
       ctx.fillStyle = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)';
       ctx.fill();
     }
@@ -211,6 +222,21 @@ function initParticles() {
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
+    if (window.musicData) {
+
+  const { analyser, bufferLength, dataArray } = window.musicData;
+
+  analyser.getByteFrequencyData(dataArray);
+
+  let sum = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    sum += dataArray[i];
+  }
+
+  window.musicData.intensity =
+    Math.max(sum / bufferLength / 40, 1);
+}
 
     particles.forEach(p => {
       p.update();
@@ -227,7 +253,9 @@ function initParticles() {
         const dy = particles[i].y - particles[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < connectionDistance) {
+        const intensity = window.musicData?.intensity || 1;
+
+        if (dist < connectionDistance + intensity * 25) {
           const alpha = (1 - (dist / connectionDistance)) * 0.15;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -411,6 +439,28 @@ function initMusicToggle() {
   const toggleBtn = document.getElementById('music-toggle');
   const soundText = document.querySelector('.sound-label');
   const bgMusic = document.getElementById('bg-music');
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+const analyser = audioContext.createAnalyser();
+
+const source = audioContext.createMediaElementSource(bgMusic);
+
+source.connect(analyser);
+
+analyser.connect(audioContext.destination);
+
+analyser.fftSize = 256;
+
+const bufferLength = analyser.frequencyBinCount;
+
+const dataArray = new Uint8Array(bufferLength);
+
+window.musicData = {
+  analyser,
+  bufferLength,
+  dataArray,
+  intensity: 1
+};
   if (!toggleBtn || !soundText) return;
 
   const setSoundState = (isOn) => {
@@ -427,6 +477,9 @@ function initMusicToggle() {
 
     if (bgMusic && bgMusic.querySelector('source, [src]')) {
       if (shouldTurnOn) {
+
+        await audioContext.resume();
+
         try {
           await bgMusic.play();
         } catch {
