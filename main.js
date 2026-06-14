@@ -57,6 +57,17 @@ const projectDetails = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize music synchronization variables on load
+  window.musicData = {
+    intensity: 1.0,
+    beatBoost: 0.0,
+    bassSmoothing: 0.0,
+    beatThreshold: 0.15,
+    analyser: null,
+    bufferLength: 0,
+    dataArray: null
+  };
+
   initCustomCursor();
   initTypewriter();
   initParticles();
@@ -173,7 +184,7 @@ function initParticles() {
     }
 
     update() {
-      const intensity = window.musicData?.intensity || 1;
+      const intensity = window.musicData?.intensity || 1.0;
 
       this.x += this.vx * intensity;
       this.y += this.vy * intensity;
@@ -198,17 +209,33 @@ function initParticles() {
     draw() {
       const isLight = document.body.classList.contains('light-theme');
       ctx.beginPath();
-      const intensity = window.musicData?.intensity || 1;
+      const beatBoost = window.musicData?.beatBoost || 0.0;
+      
+      // Dynamic pulsing radius
+      const currentRadius = this.radius + beatBoost * 4.0;
 
       ctx.arc(
         this.x,
         this.y,
-        this.radius + intensity * 0.4,
+        currentRadius,
         0,
         Math.PI * 2
       );
-      ctx.fillStyle = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)';
+      
+      const alpha = isLight 
+        ? 0.15 + (beatBoost * 0.15) 
+        : 0.25 + (beatBoost * 0.35); // Glow brighter on beats
+
+      ctx.fillStyle = isLight 
+        ? `rgba(0, 0, 0, ${alpha})` 
+        : `rgba(255, 255, 255, ${alpha})`;
+        
+      if (!isLight && beatBoost > 0.05) {
+        ctx.shadowBlur = 10 * beatBoost;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+      }
       ctx.fill();
+      ctx.shadowBlur = 0; // reset shadow mapping
     }
   }
 
@@ -221,21 +248,49 @@ function initParticles() {
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
-    if (window.musicData) {
+    
+    const bgMusic = document.getElementById('bg-music');
+    const isPaused = !bgMusic || bgMusic.paused;
 
-  const { analyser, bufferLength, dataArray } = window.musicData;
+    if (window.musicData && window.musicData.analyser && !isPaused) {
+      const { analyser, bufferLength, dataArray } = window.musicData;
+      analyser.getByteFrequencyData(dataArray);
 
-  analyser.getByteFrequencyData(dataArray);
+      // Focus on lower/bass frequency bands (bins 0-5, ~20Hz to 516Hz)
+      let bassSum = 0;
+      const bassBinsCount = 6;
+      for (let i = 0; i < bassBinsCount; i++) {
+        bassSum += dataArray[i];
+      }
+      const bassAverage = bassSum / bassBinsCount;
+      const bassNorm = bassAverage / 255;
 
-  let sum = 0;
-
-  for (let i = 0; i < bufferLength; i++) {
-    sum += dataArray[i];
-  }
-
-  window.musicData.intensity =
-    Math.max(sum / bufferLength / 40, 1);
-}
+      // Beat detection algorithm
+      const currentBass = bassNorm;
+      const diff = currentBass - window.musicData.bassSmoothing;
+      
+      if (diff > window.musicData.beatThreshold && currentBass > 0.2) {
+        window.musicData.beatBoost = 1.0;
+      }
+      
+      // Decay beat boost exponentially
+      window.musicData.beatBoost *= 0.92;
+      
+      // Update running average of bass with slow adjustment
+      window.musicData.bassSmoothing = window.musicData.bassSmoothing * 0.95 + currentBass * 0.05;
+      
+      // Compute combined velocity intensity (pulsing burst)
+      const speedMultiplier = 1.0 + (bassNorm * 2.0) + (window.musicData.beatBoost * 6.0);
+      window.musicData.intensity = speedMultiplier;
+    } else {
+      // Return parameters smoothly to standard values
+      if (window.musicData) {
+        window.musicData.intensity = 1.0;
+        window.musicData.beatBoost *= 0.9;
+        if (window.musicData.beatBoost < 0.01) window.musicData.beatBoost = 0;
+        window.musicData.bassSmoothing = 0.0;
+      }
+    }
 
     particles.forEach(p => {
       p.update();
@@ -245,6 +300,11 @@ function initParticles() {
     // Draw connection lines
     const isLight = document.body.classList.contains('light-theme');
     const lineColor = isLight ? 'rgba(0, 0, 0, ' : 'rgba(255, 255, 255, ';
+    const intensity = window.musicData?.intensity || 1.0;
+    const beatBoost = window.musicData?.beatBoost || 0.0;
+    
+    // Dynamic max connection distance
+    const maxDist = connectionDistance + (intensity * 15);
 
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
@@ -252,15 +312,14 @@ function initParticles() {
         const dy = particles[i].y - particles[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        const intensity = window.musicData?.intensity || 1;
-
-        if (dist < connectionDistance + intensity * 25) {
-          const alpha = (1 - (dist / connectionDistance)) * 0.15;
+        if (dist < maxDist) {
+          const baseAlpha = isLight ? 0.12 : 0.15;
+          const alpha = (1 - (dist / maxDist)) * (baseAlpha + beatBoost * 0.18);
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
           ctx.strokeStyle = lineColor + alpha + ')';
-          ctx.lineWidth = 1;
+          ctx.lineWidth = 1 + beatBoost * 0.8;
           ctx.stroke();
         }
       }
@@ -444,46 +503,7 @@ function initMusicToggle() {
   const toggleBtn = document.getElementById('music-toggle');
   const soundText = document.querySelector('.sound-label');
   const bgMusic = document.getElementById('bg-music');
- if (bgMusic && !window.musicData) {
 
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-  analyser = audioContext.createAnalyser();
-
-  analyser.fftSize = 256;
-
-  bufferLength = analyser.frequencyBinCount;
-
-  dataArray = new Uint8Array(bufferLength);
-
-  try {
-
-    source = audioContext.createMediaElementSource(bgMusic);
-
-    source.connect(analyser);
-
-    analyser.connect(audioContext.destination);
-
-  } catch (err) {
-
-    console.log('Audio source already connected');
-
-  }
-
-  window.musicData = {
-    analyser,
-    dataArray,
-    bufferLength,
-    intensity: 1
-  };
-}
-
-window.musicData = {
-  analyser,
-  bufferLength,
-  dataArray,
-  intensity: 1
-};
   if (!toggleBtn || !soundText) return;
 
   const setSoundState = (isOn) => {
@@ -498,14 +518,35 @@ window.musicData = {
   toggleBtn.addEventListener('click', async () => {
     const shouldTurnOn = toggleBtn.getAttribute('aria-pressed') !== 'true';
 
-    if (bgMusic && bgMusic.querySelector('source, [src]')) {
+    if (bgMusic) {
       if (shouldTurnOn) {
+        // Lazily initialize AudioContext and Analyser Node on first user interaction
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 512;
+          bufferLength = analyser.frequencyBinCount;
+          dataArray = new Uint8Array(bufferLength);
+
+          try {
+            source = audioContext.createMediaElementSource(bgMusic);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+          } catch (err) {
+            console.log('Audio source already connected', err);
+          }
+
+          window.musicData.analyser = analyser;
+          window.musicData.bufferLength = bufferLength;
+          window.musicData.dataArray = dataArray;
+        }
 
         await audioContext.resume();
 
         try {
           await bgMusic.play();
-        } catch {
+        } catch (err) {
+          console.error('Playback failed', err);
           setSoundState(false);
           return;
         }
