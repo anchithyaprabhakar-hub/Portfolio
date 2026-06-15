@@ -171,7 +171,7 @@ function initParticles() {
 
   let particles = [];
   const particleCount = Math.min(60, Math.floor((width * height) / 25000));
-  const connectionDistance = 120;
+  const connectionDistance = 95;
   let mouse = { x: null, y: null, radius: 150 };
 
   class Particle {
@@ -181,6 +181,9 @@ function initParticles() {
       this.vx = (Math.random() - 0.5) * 0.4;
       this.vy = (Math.random() - 0.5) * 0.4;
       this.radius = Math.random() * 2 + 1;
+      this.baseOpacity = Math.random() * 0.5 + 0.3;
+      this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+      this.twinkleOffset = Math.random() * Math.PI * 2;   
     }
 
     update() {
@@ -212,32 +215,54 @@ function initParticles() {
       const beatBoost = window.musicData?.beatBoost || 0.0;
       
       // Dynamic pulsing radius
-      const currentRadius = this.radius + beatBoost * 4.0;
+      const currentRadius = this.radius;
 
-      ctx.arc(
-        this.x,
-        this.y,
-        currentRadius,
-        0,
-        Math.PI * 2
-      );
+      drawStar(this.x, this.y, 5, currentRadius, currentRadius / 2);
       
-      const alpha = isLight 
-        ? 0.15 + (beatBoost * 0.15) 
-        : 0.25 + (beatBoost * 0.35); // Glow brighter on beats
+      const twinkle =
+     Math.sin(Date.now() * this.twinkleSpeed + this.twinkleOffset) * 0.15;
+
+     const alpha =
+       this.baseOpacity +
+       twinkle +
+       (beatBoost * 0.9);
 
       ctx.fillStyle = isLight 
         ? `rgba(0, 0, 0, ${alpha})` 
         : `rgba(255, 255, 255, ${alpha})`;
         
-      if (!isLight && beatBoost > 0.05) {
-        ctx.shadowBlur = 10 * beatBoost;
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
-      }
+      if (!isLight) {
+        ctx.shadowBlur = 2 + (beatBoost * 22);
+        ctx.shadowColor = `rgba(255,255,255,${0.6 + beatBoost})`;
+     }
       ctx.fill();
       ctx.shadowBlur = 0; // reset shadow mapping
     }
   }
+
+  function drawStar(x, y, points, outerRadius, innerRadius) {
+  let rot = Math.PI / 2 * 3;
+  let step = Math.PI / points;
+
+  ctx.beginPath();
+
+  for (let i = 0; i < points; i++) {
+    let sx = x + Math.cos(rot) * outerRadius;
+    let sy = y + Math.sin(rot) * outerRadius;
+
+    ctx.lineTo(sx, sy);
+    rot += step;
+
+    sx = x + Math.cos(rot) * innerRadius;
+    sy = y + Math.sin(rot) * innerRadius;
+
+    ctx.lineTo(sx, sy);
+    rot += step;
+  }
+
+  ctx.lineTo(x, y - outerRadius);
+  ctx.closePath();
+}
 
   function setupParticles() {
     particles = [];
@@ -313,8 +338,8 @@ function initParticles() {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < maxDist) {
-          const baseAlpha = isLight ? 0.12 : 0.15;
-          const alpha = (1 - (dist / maxDist)) * (baseAlpha + beatBoost * 0.18);
+         const alpha = (1 - (dist / maxDist)) * 0.12;
+
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
