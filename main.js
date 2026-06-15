@@ -168,81 +168,40 @@ function initParticles() {
 
   let width = canvas.width = window.innerWidth;
   let height = canvas.height = window.innerHeight;
-  let centerX = width / 2;
-  let centerY = height / 2;
 
   let particles = [];
-  // Increased density for a richer starry space effect
-  const particleCount = Math.min(100, Math.floor((width * height) / 15000));
-  const connectionDistance = 100;
-  let mouse = { x: null, y: null, radius: 180 };
+  const particleCount = Math.min(60, Math.floor((width * height) / 25000));
+  const connectionDistance = 120;
+  let mouse = { x: null, y: null, radius: 150 };
 
   class Particle {
     constructor() {
-      this.x = 0;
-      this.y = 0;
-      this.z = Math.random() * 1.5 + 0.5; // Depth multiplier for 3D parallax
-      this.radius = (Math.random() * 1.4 + 0.4) * this.z;
-      
-      // Radial drift speed
-      this.radialSpeed = (Math.random() - 0.25) * 0.08;
-
-      // Cosmic star colors
-      const colors = [
-        'rgba(147, 51, 234, ', // Neon purple
-        'rgba(79, 70, 229, ',  // Indigo
-        'rgba(6, 182, 212, ',  // Cyan
-        'rgba(236, 72, 153, ', // Deep magenta
-        'rgba(255, 255, 255, ', // Starlight white
-        'rgba(168, 85, 247, '  // Bright lavender
-      ];
-      this.colorBase = colors[Math.floor(Math.random() * colors.length)];
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.radius = Math.random() * 2 + 1;
     }
 
     update() {
       const intensity = window.musicData?.intensity || 1.0;
 
-      // Calculate direction vector from galaxy core
-      const dx = this.x - centerX;
-      const dy = this.y - centerY;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      this.x += this.vx * intensity;
+      this.y += this.vy * intensity;
 
-      // Flat rotational velocity (slower orbits further out, scaled by depth)
-      const speedFactor = (0.00035 + Math.random() * 0.00025) * (200 / (dist + 80)) * this.z;
-      
-      // Tangent vector for counter-clockwise orbital velocity
-      const tx = -dy / dist;
-      const ty = dx / dist;
-
-      // Orbit movement
-      this.x += tx * speedFactor * dist * intensity;
-      this.y += ty * speedFactor * dist * intensity;
-
-      // Radial drift
-      const rx = dx / dist;
-      const ry = dy / dist;
-      this.x += rx * this.radialSpeed * intensity;
-      this.y += ry * this.radialSpeed * intensity;
-
-      // Core recycling: if drifted past outer limit, spawn back in core
-      const maxRadius = Math.max(width, height) * 0.75;
-      if (dist > maxRadius) {
-        const angle = Math.random() * Math.PI * 2;
-        const d = Math.random() * 45;
-        this.x = centerX + Math.cos(angle) * d;
-        this.y = centerY + Math.sin(angle) * d;
-        this.radialSpeed = (Math.random() - 0.25) * 0.08;
-      }
+      // Bounce boundaries
+      if (this.x < 0 || this.x > width) this.vx *= -1;
+      if (this.y < 0 || this.y > height) this.vy *= -1;
 
       // Mouse interaction (repel)
       if (mouse.x !== null && mouse.y !== null) {
-        const mdx = mouse.x - this.x;
-        const mdy = mouse.y - this.y;
-        const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist < mouse.radius) {
-          const force = (mouse.radius - mdist) / mouse.radius;
-          this.x -= (mdx / mdist) * force * 2.5;
-          this.y -= (mdy / mdist) * force * 2.5;
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouse.radius) {
+          const force = (mouse.radius - dist) / mouse.radius;
+          this.x -= dx / dist * force * 1.5;
+          this.y -= dy / dist * force * 1.5;
         }
       }
     }
@@ -252,9 +211,8 @@ function initParticles() {
       ctx.beginPath();
       const beatBoost = window.musicData?.beatBoost || 0.0;
       
-      // Pulse radius on beats (foreground stars react more strongly)
-      const pulse = beatBoost * 3.5 * (this.z / 2.0);
-      const currentRadius = Math.max(0.4, this.radius + pulse);
+      // Dynamic pulsing radius
+      const currentRadius = this.radius + beatBoost * 4.0;
 
       ctx.arc(
         this.x,
@@ -264,44 +222,27 @@ function initParticles() {
         Math.PI * 2
       );
       
-      // Depth-based opacity, glows brighter on beats
-      const baseAlpha = (this.z / 2.0) * (isLight ? 0.3 : 0.45);
-      const alpha = Math.min(1.0, baseAlpha + beatBoost * 0.4);
+      const alpha = isLight 
+        ? 0.15 + (beatBoost * 0.15) 
+        : 0.25 + (beatBoost * 0.35); // Glow brighter on beats
 
-      ctx.fillStyle = this.colorBase + alpha + ')';
-      
-      // Glow effect for prominent foreground stars
-      if (!isLight && beatBoost > 0.05 && this.z > 1.2) {
-        ctx.shadowBlur = 12 * beatBoost;
-        ctx.shadowColor = this.colorBase + '0.8)';
+      ctx.fillStyle = isLight 
+        ? `rgba(0, 0, 0, ${alpha})` 
+        : `rgba(255, 255, 255, ${alpha})`;
+        
+      if (!isLight && beatBoost > 0.05) {
+        ctx.shadowBlur = 10 * beatBoost;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
       }
-      
       ctx.fill();
-      ctx.shadowBlur = 0;
+      ctx.shadowBlur = 0; // reset shadow mapping
     }
   }
 
   function setupParticles() {
     particles = [];
-    const armsCount = 2;
-    
     for (let i = 0; i < particleCount; i++) {
-      const p = new Particle();
-      
-      // Distribute along spiral arms
-      const arm = i % armsCount;
-      const baseAngle = (arm * Math.PI) + (Math.random() * 0.4);
-      
-      // Distribute distance with power scale to concentrate density near core
-      const distance = Math.pow(Math.random(), 1.5) * (Math.min(width, height) * 0.45);
-      
-      // Add curved swirl angle
-      const spiralAngle = baseAngle + (distance * 0.0035);
-      
-      p.x = centerX + Math.cos(spiralAngle) * distance;
-      p.y = centerY + Math.sin(spiralAngle) * distance;
-      
-      particles.push(p);
+      particles.push(new Particle());
     }
   }
 
@@ -310,9 +251,6 @@ function initParticles() {
     
     const bgMusic = document.getElementById('bg-music');
     const isPaused = !bgMusic || bgMusic.paused;
-    
-    let intensity = 1.0;
-    let beatBoost = 0.0;
 
     if (window.musicData && window.musicData.analyser && !isPaused) {
       const { analyser, bufferLength, dataArray } = window.musicData;
@@ -344,10 +282,8 @@ function initParticles() {
       // Compute combined velocity intensity (pulsing burst)
       const speedMultiplier = 1.0 + (bassNorm * 2.0) + (window.musicData.beatBoost * 6.0);
       window.musicData.intensity = speedMultiplier;
-      
-      intensity = speedMultiplier;
-      beatBoost = window.musicData.beatBoost;
     } else {
+      // Return parameters smoothly to standard values
       if (window.musicData) {
         window.musicData.intensity = 1.0;
         window.musicData.beatBoost *= 0.9;
@@ -356,35 +292,19 @@ function initParticles() {
       }
     }
 
-    // DRAW GALACTIC NUCLEUS (glowing core)
-    const isLight = document.body.classList.contains('light-theme');
-    const coreRadius = Math.min(width, height) * 0.16 * (1.0 + beatBoost * 0.28);
-    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, coreRadius);
-    
-    if (isLight) {
-      gradient.addColorStop(0, `rgba(147, 51, 234, ${0.12 + beatBoost * 0.1})`);
-      gradient.addColorStop(0.4, `rgba(6, 182, 212, ${0.05 + beatBoost * 0.05})`);
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    } else {
-      gradient.addColorStop(0, `rgba(147, 51, 234, ${0.28 + beatBoost * 0.15})`);
-      gradient.addColorStop(0.35, `rgba(79, 70, 229, ${0.12 + beatBoost * 0.08})`);
-      gradient.addColorStop(0.7, `rgba(6, 182, 212, ${0.04 + beatBoost * 0.03})`);
-      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    }
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, coreRadius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // UPDATE AND DRAW STARS
     particles.forEach(p => {
       p.update();
       p.draw();
     });
 
-    // DRAW CONSTELLATIONS (blending lines between neighboring stars)
-    const lineColor = isLight ? 'rgba(79, 70, 229, ' : 'rgba(147, 51, 234, ';
-    const maxDist = connectionDistance + (intensity * 12);
+    // Draw connection lines
+    const isLight = document.body.classList.contains('light-theme');
+    const lineColor = isLight ? 'rgba(0, 0, 0, ' : 'rgba(255, 255, 255, ';
+    const intensity = window.musicData?.intensity || 1.0;
+    const beatBoost = window.musicData?.beatBoost || 0.0;
+    
+    // Dynamic max connection distance
+    const maxDist = connectionDistance + (intensity * 15);
 
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
@@ -393,15 +313,13 @@ function initParticles() {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < maxDist) {
-          // Alpha blends dynamically near bounds and matches average depth
-          const baseAlpha = isLight ? 0.08 : 0.12;
-          const alpha = (1 - (dist / maxDist)) * (baseAlpha + beatBoost * 0.16) * (Math.min(particles[i].z, particles[j].z) / 2.0);
-          
+          const baseAlpha = isLight ? 0.12 : 0.15;
+          const alpha = (1 - (dist / maxDist)) * (baseAlpha + beatBoost * 0.18);
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
           ctx.strokeStyle = lineColor + alpha + ')';
-          ctx.lineWidth = (0.6 + beatBoost * 0.6) * Math.min(particles[i].z, particles[j].z);
+          ctx.lineWidth = 1 + beatBoost * 0.8;
           ctx.stroke();
         }
       }
@@ -426,8 +344,6 @@ function initParticles() {
     resizeTimeout = setTimeout(() => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      centerX = width / 2;
-      centerY = height / 2;
       setupParticles();
     }, 200);
   });
