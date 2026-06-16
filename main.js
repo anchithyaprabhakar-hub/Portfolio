@@ -170,8 +170,8 @@ function initParticles() {
   let height = canvas.height = window.innerHeight;
 
   let particles = [];
-  const particleCount = Math.min(60, Math.floor((width * height) / 25000));
-  const connectionDistance = 95;
+  const particleCount = Math.min(110, Math.floor((width * height) / 14000));
+  const connectionDistance = 150;
   let mouse = { x: null, y: null, radius: 150 };
 
   class Particle {
