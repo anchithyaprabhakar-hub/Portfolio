@@ -509,6 +509,8 @@ body.light-theme .time-location {
   align-items: flex-start;
   justify-content: center;
   z-index: 2;
+
+  margin-top: -35px;
 }
 
 .hero-content img,
