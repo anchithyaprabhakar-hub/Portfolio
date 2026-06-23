@@ -213,7 +213,10 @@
     about: 'I am Anchithya Prabhakar — a Software Engineer passionate about full-stack development, AI, and clean code.',
     skills: 'HTML/CSS, JavaScript, React/Next.js, Node/Express, Python, SQL/NoSQL, Git, Docker, Generative AI.',
     contact: 'Email: anchithyaprabhakar@gmail.com\nLinkedIn: linkedin.com/in/anchithya-prabhakar-35bb2a2a9\nGitHub: github.com/anchithyaprabhakar-hub',
-    projects: 'Navigate to the Projects section or type a project name: collab-board, scriptify, research-paper'
+    projects: 'Navigate to the Projects section or type a project name: aegis-nsai, scriptify, research-paper',
+    'aegis-nsai': 'AEGIS-NSAI: A full-stack Neuro-Symbolic AI intrusion detection platform that integrates machine learning, rule-based reasoning, and explainable AI to analyze cyber threats in real time.',
+    'scriptify': 'Scriptify runner: A fast shell-level helper tool to manage, tag, run, and document local developer script macros and run pipelines.',
+    'research-paper': 'ARTINT-S-26-01436 Research Paper: An academic research paper on Neuro-Symbolic AI threat detection.'
   };
 
   input.addEventListener('keydown', (e) => {
@@ -387,27 +390,27 @@ const projectDetails = {
     `
   },
 
-  'collab-board': {
-    title: 'CollabBoard',
-    tags: ['WebSockets', 'Express', 'PostgreSQL', 'Canvas API'],
-    image: 'placeholder_collab.png',
-    meta: 'Developed in 2024 • Full Stack Dev',
-    description: `A real-time whiteboard app allowing distributed teams to brainstorm, drag items, sync workspaces, and review versions. Built from the ground up for seamless communication.`,
+  'aegis-nsai': {
+    title: 'AEGIS-NSAI',
+    tags: ['Neuro-Symbolic AI', 'React', 'FastAPI', 'Explainable AI'],
+    image: 'placeholder_ai.png',
+    meta: 'Developed in 2026 • Full Stack & AI Developer',
+    description: `A full-stack Neuro-Symbolic AI intrusion detection platform that integrates machine learning, rule-based reasoning, and explainable AI to analyze cyber threats in real time through an interactive dashboard.`,
     fullDetails: `
-      <p>CollabBoard is a collaborative vector-drawing and sticky-note canvas designed for speed and simplicity. Standard collaboration tools suffer from lag; this project solves that by utilizing direct WebSocket connections with minimal data overhead.</p>
+      <p>AEGIS-NSAI is a state-of-the-art intrusion detection platform designed to detect complex cyber attacks. By combining the pattern-matching power of deep learning with the logical guarantees of rule-based symbolic reasoning, it offers both high detection accuracy and explainable AI (XAI) outputs for security analysts.</p>
 
       <h4 style="margin:1.5rem 0 0.5rem;color:var(--accent-2);">
-        Key Features & Implementation
+        Key Features & Architecture
       </h4>
 
       <ul style="padding-left:1.25rem;margin-bottom:1rem;color:var(--text-muted);">
-        <li>Ultra-low latency draw operations with raw HTML5 Canvas.</li>
-        <li>Conflict resolution using Operational Transformation (OT) rules.</li>
-        <li>Drag-and-drop sticky notes with custom color-mix properties.</li>
-        <li>User presence indicators showing active cursors in real-time.</li>
+        <li><strong>Neuro-Symbolic Reasoning:</strong> Integrates neural network threat classification with symbolic First-Order Logic rules to verify decisions and prevent false positives.</li>
+        <li><strong>Explainable AI (XAI):</strong> Generates natural language explanations and logic proofs showing exactly why a specific network packet or behavior was flagged as malicious.</li>
+        <li><strong>Real-time Analytics Dashboard:</strong> Interactive React frontend with dynamic graphs, real-time threat maps, and instant warning streams via WebSockets.</li>
+        <li><strong>Scalable Backend:</strong> High-performance FastAPI backend processing network packets with automated threat signature matching.</li>
       </ul>
 
-      <p>Built with PostgreSQL to store coordinates and board configurations. The CSS is designed to scale dynamically for tablets and desktop displays, with fully responsive viewports.</p>
+      <p>Designed to help security operations centers (SOC) make faster, more informed decisions with clear reasonings behind every AI threat flag, bridging the gap between accuracy and interpretability.</p>
     `
   },
 
