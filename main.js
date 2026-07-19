@@ -213,8 +213,9 @@
     about: 'I am Anchithya Prabhakar — a Software Engineer passionate about full-stack development, AI, and clean code.',
     skills: 'HTML/CSS, JavaScript, React/Next.js, Node/Express, Python, SQL/NoSQL, Git, Docker, Generative AI.',
     contact: 'Email: anchithyaprabhakar@gmail.com\nLinkedIn: linkedin.com/in/anchithya-prabhakar-35bb2a2a9\nGitHub: github.com/anchithyaprabhakar-hub',
-    projects: 'Navigate to the Projects section or type a project name: aegis-nsai, scriptify, research-paper',
+    projects: 'Navigate to the Projects section or type a project name: research-paper, aegis-nsai, dosetwin, scriptify',
     'aegis-nsai': 'AEGIS-NSAI: A full-stack Neuro-Symbolic AI intrusion detection platform that integrates machine learning, rule-based reasoning, and explainable AI to analyze cyber threats in real time.',
+    'dosetwin': 'DoseTwin: A Digital Twin-powered medicine management platform for patients and caregivers with medicine tracking, analytics, inventory management and caregiver monitoring.',
     'scriptify': 'Scriptify runner: A fast shell-level helper tool to manage, tag, run, and document local developer script macros and run pipelines.',
     'research-paper': 'ARTINT-S-26-01436 Research Paper: An academic research paper on Neuro-Symbolic AI threat detection.'
   };
@@ -413,6 +414,47 @@ const projectDetails = {
       <p>Designed to help security operations centers (SOC) make faster, more informed decisions with clear reasonings behind every AI threat flag, bridging the gap between accuracy and interpretability.</p>
     `
   },
+
+  'dosetwin': {
+  title: 'DoseTwin',
+
+  tags: [
+    'React',
+    'Digital Twin',
+    'Firebase',
+    'Healthcare',
+    'Dashboard'
+  ],
+
+  image: 'DoseTwin.png',
+
+  meta: 'Smart Medicine Management Platform • 2026',
+
+  description: `A Digital Twin-powered medicine management platform for patients and caregivers.`,
+
+  fullDetails: `
+    <p>
+      DoseTwin is an intelligent medicine management platform built around a live Digital Twin of a medicine dispenser. It enables users and caregivers to monitor medication schedules, inventory, adherence, and health insights through an interactive dashboard.
+    </p>
+
+    <h4 style="margin:1.5rem 0 0.5rem;color:var(--accent-2);">
+      Key Features
+    </h4>
+
+    <ul style="padding-left:1.25rem;margin-bottom:1rem;color:var(--text-muted);">
+      <li>Digital Twin visualization of medicine dispenser.</li>
+      <li>Medicine inventory tracking.</li>
+      <li>Medication reminders.</li>
+      <li>Caregiver monitoring dashboard.</li>
+      <li>Analytics and adherence reports.</li>
+      <li>Responsive React interface.</li>
+    </ul>
+
+    <p>
+      Built using React, Vite, Firebase, Recharts and modern UI principles to improve medication adherence and healthcare management.
+    </p>
+  `
+},
 
   'scriptify': {
     title: 'Scriptify Runner',
