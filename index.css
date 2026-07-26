@@ -72,6 +72,7 @@ body {
   position: relative;
   min-height: 100vh;
   overscroll-behavior-y: none;
+  cursor: none;
 }
 
 /* Custom Scrollbar */
