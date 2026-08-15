@@ -39,25 +39,84 @@
 (function initMusic() {
   const btn = document.getElementById('music-toggle');
   const audio = document.getElementById('bg-music');
+
   if (!btn || !audio) return;
 
   let isPlaying = false;
 
-  btn.addEventListener('click', () => {
+  async function startMusic() {
+    try {
+      audio.volume = 0.35;
+      await audio.play();
+
+      isPlaying = true;
+      btn.classList.remove('muted');
+
+      const label = btn.querySelector('.sound-label');
+      if (label) {
+        label.textContent = 'SOUND: ON';
+      }
+    } catch (error) {
+      // Browser blocked autoplay.
+      // Start music after the user's first interaction.
+      isPlaying = false;
+      btn.classList.add('muted');
+
+      const label = btn.querySelector('.sound-label');
+      if (label) {
+        label.textContent = 'SOUND: OFF';
+      }
+    }
+  }
+
+  // Try to start automatically when the portfolio opens.
+  startMusic();
+
+  // Fallback for browsers that block autoplay.
+  const startOnInteraction = () => {
+    if (!isPlaying) {
+      startMusic();
+    }
+
+    document.removeEventListener('click', startOnInteraction);
+    document.removeEventListener('keydown', startOnInteraction);
+    document.removeEventListener('touchstart', startOnInteraction);
+  };
+
+  document.addEventListener('click', startOnInteraction);
+  document.addEventListener('keydown', startOnInteraction);
+  document.addEventListener('touchstart', startOnInteraction);
+
+  // Manual sound toggle.
+  btn.addEventListener('click', async () => {
     if (isPlaying) {
       audio.pause();
-      btn.classList.add('muted');
-      btn.querySelector('.sound-label').textContent = 'SOUND: OFF';
-    } else {
-      audio.play().catch(() => {});
-      btn.classList.remove('muted');
-      btn.querySelector('.sound-label').textContent = 'SOUND: ON';
-    }
-    isPlaying = !isPlaying;
-  });
+      isPlaying = false;
 
-  // Start muted
-  btn.classList.add('muted');
+      btn.classList.add('muted');
+
+      const label = btn.querySelector('.sound-label');
+      if (label) {
+        label.textContent = 'SOUND: OFF';
+      }
+    } else {
+      try {
+        audio.volume = 0.35;
+        await audio.play();
+
+        isPlaying = true;
+
+        btn.classList.remove('muted');
+
+        const label = btn.querySelector('.sound-label');
+        if (label) {
+          label.textContent = 'SOUND: ON';
+        }
+      } catch (error) {
+        console.log('Music could not be started:', error);
+      }
+    }
+  });
 })();
 
 // ─── Particle Canvas Background ─────────────────────────────────────
