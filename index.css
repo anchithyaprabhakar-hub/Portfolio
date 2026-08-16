@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 /* =========================================================
-   ROOT / THEME
+   ROOT / THEME VARIABLES
    ========================================================= */
 
 :root {
@@ -16,8 +16,10 @@
   /* Dark Theme */
   --bg-base: oklch(0% 0 0);
   --bg-surface: rgba(20, 20, 20, 0.6);
+
   --border-color: rgba(255, 255, 255, 0.1);
   --border-focus: oklch(100% 0 0);
+
   --text-main: oklch(98% 0 0);
   --text-muted: oklch(75% 0 0);
 
@@ -26,16 +28,17 @@
 
   --accent-glow: rgba(255, 255, 255, 0.06);
 
-  --card-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
 
   --glass-blur: blur(16px);
 
   --scrollbar-thumb: oklch(30% 0 0);
 
   --header-height: 4.5rem;
-
   --container-gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Cursor */
+  --cursor-color: #ffffff;
 }
 
 @supports (linear-gradient(in oklch, white, black)) {
@@ -44,6 +47,7 @@
     --in-oklab: in oklab;
   }
 }
+
 
 /* =========================================================
    LIGHT THEME
@@ -64,11 +68,14 @@ body.light-theme {
 
   --accent-glow: rgba(0, 0, 0, 0.04);
 
-  --card-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, 0.06);
+  --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
 
   --scrollbar-thumb: oklch(80% 0 0);
+
+  /* Black sparkle in light mode */
+  --cursor-color: #000000;
 }
+
 
 /* =========================================================
    RESET
@@ -81,6 +88,7 @@ body.light-theme {
   margin: 0;
   padding: 0;
 }
+
 
 /* =========================================================
    HTML / BODY
@@ -97,7 +105,6 @@ body {
   color: var(--text-main);
 
   font-family: var(--font-sans);
-
   line-height: 1.6;
 
   overflow-x: hidden;
@@ -112,9 +119,124 @@ body {
 
   overscroll-behavior-y: none;
 
-  /* Hide normal mouse pointer */
+  /*
+    Hide the native cursor because we use
+    the custom four-point sparkle.
+  */
   cursor: none;
 }
+
+
+/* =========================================================
+   CUSTOM SPARKLE CURSOR
+   ========================================================= */
+
+.custom-cursor {
+  position: fixed;
+
+  left: 0;
+  top: 0;
+
+  width: 24px;
+  height: 24px;
+
+  pointer-events: none;
+
+  z-index: 99999;
+
+  display: none;
+
+  transform: translate(-50%, -50%);
+
+  background: var(--cursor-color);
+
+  /*
+    Four-point symmetrical sparkle.
+
+    Thin tips
+    Wider center
+    Equal vertical/horizontal proportions
+    No glow
+    No reflection
+    No gradient
+  */
+
+  clip-path: polygon(
+    50% 0%,
+    51.5% 16%,
+    53% 29%,
+    57% 39%,
+    61% 43%,
+
+    71% 47%,
+    84% 48.5%,
+    100% 50%,
+
+    84% 51.5%,
+    71% 53%,
+    61% 57%,
+    57% 61%,
+
+    53% 71%,
+    51.5% 84%,
+    50% 100%,
+
+    48.5% 84%,
+    47% 71%,
+    43% 61%,
+    39% 57%,
+
+    29% 53%,
+    16% 51.5%,
+    0% 50%,
+
+    16% 48.5%,
+    29% 47%,
+    39% 43%,
+    43% 39%,
+
+    47% 29%,
+    48.5% 16%
+  );
+
+  opacity: 1;
+
+  transition:
+    width 0.18s ease,
+    height 0.18s ease,
+    background-color 0.25s ease;
+}
+
+
+/* Desktop only */
+@media (pointer: fine) {
+  .custom-cursor {
+    display: block;
+  }
+}
+
+
+/*
+  Small expansion when hovering
+  over clickable elements.
+*/
+.custom-cursor.hover {
+  width: 28px;
+  height: 28px;
+}
+
+
+/* Dark mode cursor */
+body:not(.light-theme) .custom-cursor {
+  background: #ffffff;
+}
+
+
+/* Light mode cursor */
+body.light-theme .custom-cursor {
+  background: #000000;
+}
+
 
 /* =========================================================
    CUSTOM SCROLLBAR
@@ -130,9 +252,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
-
   border-radius: 5px;
-
   border: 2px solid var(--bg-base);
 }
 
@@ -140,126 +260,9 @@ body {
   background: var(--accent-1);
 }
 
-/* =========================================================
-   CUSTOM SPARKLE CURSOR
-   ========================================================= */
-
-/*
-   Target appearance:
-
-        ✧
-
-   Thin four-point sparkle.
-   Mostly grey / white.
-   Very subtle cool blue-purple reflection.
-*/
-
-.custom-cursor {
-  position: fixed;
-
-  left: 0;
-  top: 0;
-
-  width: 18px;
-  height: 18px;
-
-  pointer-events: none;
-
-  z-index: 99999;
-
-  display: none;
-
-  transform: translate(-50%, -50%);
-
-  color: #d8d8d8;
-
-  font-family:
-    "Times New Roman",
-    Georgia,
-    serif;
-
-  font-size: 22px;
-
-  font-weight: 400;
-
-  line-height: 18px;
-
-  text-align: center;
-
-  user-select: none;
-
-  /*
-     Very subtle reflection:
-     white/grey core
-     + tiny cool blue/purple glow
-  */
-  text-shadow:
-    0 0 2px rgba(255, 255, 255, 0.95),
-    0 0 5px rgba(220, 220, 225, 0.65),
-    0 0 9px rgba(130, 150, 255, 0.25),
-    0 0 13px rgba(150, 110, 210, 0.14);
-
-  opacity: 0.95;
-
-  transition:
-    transform 0.15s ease,
-    opacity 0.2s ease,
-    text-shadow 0.2s ease;
-}
-
-/*
-   Thin outlined sparkle
-*/
-.custom-cursor::before {
-  content: "✧";
-
-  display: block;
-
-  width: 100%;
-  height: 100%;
-
-  color: #d6d6d6;
-
-  transform: scale(0.82);
-
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease;
-}
-
-/*
-   Slightly brighter when hovering links/buttons
-*/
-.custom-cursor.hover {
-  transform: translate(-50%, -50%) scale(1.12);
-
-  color: #eeeeee;
-
-  text-shadow:
-    0 0 2px rgba(255, 255, 255, 1),
-    0 0 5px rgba(235, 235, 240, 0.75),
-    0 0 10px rgba(130, 150, 255, 0.32),
-    0 0 15px rgba(150, 110, 210, 0.18);
-}
-
-.custom-cursor.hover::before {
-  transform: scale(0.9);
-
-  color: #eeeeee;
-}
-
-/*
-   Only show custom cursor when a mouse / fine pointer
-   is available.
-*/
-@media (pointer: fine) {
-  .custom-cursor {
-    display: block;
-  }
-}
 
 /* =========================================================
-   BACKGROUND CANVAS
+   CANVAS BACKGROUND
    ========================================================= */
 
 #bg-canvas {
@@ -277,6 +280,7 @@ body {
 
   opacity: 0.6;
 }
+
 
 /* =========================================================
    TYPOGRAPHY
@@ -305,6 +309,7 @@ a {
   transition: color 0.2s ease;
 }
 
+
 /* =========================================================
    CONTAINER
    ========================================================= */
@@ -320,6 +325,7 @@ a {
 
   z-index: 2;
 }
+
 
 /* =========================================================
    HEADER
@@ -339,7 +345,6 @@ header {
   z-index: 100;
 
   backdrop-filter: var(--glass-blur);
-
   -webkit-backdrop-filter: var(--glass-blur);
 
   background: rgba(0, 0, 0, 0.82);
@@ -351,9 +356,21 @@ header {
     border-color 0.4s ease;
 }
 
+
+/*
+  IMPORTANT:
+  Keep the header visible in light mode.
+*/
 body.light-theme header {
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.94);
+
+  border-bottom-color: rgba(0, 0, 0, 0.1);
 }
+
+
+/* =========================================================
+   NAV CONTAINER
+   ========================================================= */
 
 .nav-container {
   display: flex;
@@ -369,6 +386,7 @@ body.light-theme header {
   padding: 0.6rem 1.5rem;
 }
 
+
 /* =========================================================
    LOGO
    ========================================================= */
@@ -382,8 +400,7 @@ body.light-theme header {
 
   background:
     linear-gradient(
-      to right,
-      var(--in-oklch),
+      to right var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
@@ -404,6 +421,7 @@ body.light-theme header {
 
   white-space: nowrap;
 }
+
 
 /* =========================================================
    NAVIGATION
@@ -475,6 +493,34 @@ nav a.active {
   color: #ffffff;
 }
 
+
+/* =========================================================
+   LIGHT MODE NAV
+   ========================================================= */
+
+body.light-theme nav a {
+  background: rgba(0, 0, 0, 0.025);
+
+  border-color: rgba(0, 0, 0, 0.10);
+
+  color: #111111;
+}
+
+body.light-theme nav a:hover {
+  background: rgba(0, 0, 0, 0.05);
+
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+body.light-theme nav a.active {
+  background: rgba(0, 0, 0, 0.06);
+
+  border-color: rgba(0, 0, 0, 0.18);
+
+  color: #000000;
+}
+
+
 /* =========================================================
    THEME TOGGLE
    ========================================================= */
@@ -487,7 +533,6 @@ nav a.active {
   border-radius: 50%;
 
   width: 48px;
-
   height: 48px;
 
   cursor: pointer;
@@ -518,7 +563,6 @@ body.light-theme .theme-toggle-btn:hover {
 
 .theme-toggle-btn svg {
   width: 1.25rem;
-
   height: 1.25rem;
 
   fill: currentColor;
@@ -535,6 +579,7 @@ body.light-theme .theme-toggle-btn .moon-icon {
 body.light-theme .theme-toggle-btn .sun-icon {
   display: block;
 }
+
 
 /* =========================================================
    TIME / LOCATION
@@ -597,8 +642,13 @@ body.light-theme .theme-toggle-btn .sun-icon {
 body.light-theme .time-location {
   background: rgba(0, 0, 0, 0.04);
 
-  border-color: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.10);
 }
+
+body.light-theme .time-display {
+  color: #111111;
+}
+
 
 /* =========================================================
    SOUND TOGGLE
@@ -654,6 +704,25 @@ body.light-theme .time-location {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+body.light-theme .sound-toggle {
+  background: rgba(0, 0, 0, 0.03);
+
+  border-color: rgba(0, 0, 0, 0.10);
+
+  color: #111111;
+}
+
+body.light-theme .sound-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   SOUND ICON / INDICATOR
+   ========================================================= */
+
 .music-icon {
   display: none;
 }
@@ -673,6 +742,11 @@ body.light-theme .time-location {
 
   letter-spacing: -0.01em;
 }
+
+body.light-theme .sound-text {
+  color: #111111;
+}
+
 
 /* =========================================================
    SOUND WAVE
@@ -698,6 +772,10 @@ body.light-theme .time-location {
   border-radius: 20px;
 
   animation: wave 1s ease-in-out infinite;
+}
+
+body.light-theme .sound-wave span {
+  background: rgba(0, 0, 0, 0.65);
 }
 
 .sound-wave span:nth-child(1) {
@@ -750,6 +828,7 @@ body.light-theme .time-location {
 
   opacity: 0.25;
 }
+
 
 /* =========================================================
    HERO
@@ -811,8 +890,7 @@ body.light-theme .time-location {
 
   display: block;
 
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 
   background-color: rgba(255, 255, 255, 0.1);
 
@@ -828,8 +906,7 @@ body.light-theme .time-location {
 .hero-content h1 span {
   background:
     linear-gradient(
-      to right,
-      var(--in-oklch),
+      to right var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
@@ -873,6 +950,7 @@ body.light-theme .time-location {
   margin-top: 1.5rem;
 }
 
+
 /* =========================================================
    BUTTONS
    ========================================================= */
@@ -905,23 +983,20 @@ body.light-theme .time-location {
 .btn-primary {
   background:
     linear-gradient(
-      to right,
-      var(--in-oklch),
+      to right var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
 
   color: white;
 
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
 
-  box-shadow:
-    0 6px 24px rgba(var(--accent-1), 0.4);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
 }
 
 .btn-secondary {
@@ -941,6 +1016,7 @@ body.light-theme .time-location {
 
   border-color: var(--accent-1);
 }
+
 
 /* =========================================================
    BACK TO TOP
@@ -1048,8 +1124,9 @@ body.light-theme .time-location {
   height: 1.35rem;
 }
 
+
 /* =========================================================
-   TERMINAL
+   TERMINAL WIDGET
    ========================================================= */
 
 .terminal-widget {
@@ -1100,6 +1177,10 @@ body.light-theme .terminal-widget:hover {
   align-items: center;
 
   border-bottom: 1px solid var(--border-color);
+}
+
+body.light-theme .terminal-header {
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .terminal-buttons {
@@ -1189,10 +1270,6 @@ body.light-theme .terminal-widget:hover {
   color: var(--text-main);
 }
 
-body.light-theme .terminal-body {
-  color: var(--text-main);
-}
-
 .terminal-output {
   white-space: pre-wrap;
 
@@ -1235,8 +1312,9 @@ body.light-theme .terminal-body {
   outline: none;
 }
 
+
 /* =========================================================
-   ABOUT / SKILLS
+   SECTIONS
    ========================================================= */
 
 .section {
@@ -1256,8 +1334,7 @@ body.light-theme .terminal-body {
 
   background:
     linear-gradient(
-      to right,
-      var(--in-oklch),
+      to right var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
@@ -1290,14 +1367,18 @@ body.light-theme .terminal-body {
 
   background:
     linear-gradient(
-      to right,
-      var(--in-oklch),
+      to right var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
 
   border-radius: 2px;
 }
+
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
 
 .about-grid {
   display: grid;
@@ -1321,8 +1402,9 @@ body.light-theme .terminal-body {
   font-size: 1.05rem;
 }
 
+
 /* =========================================================
-   GLASS CARD
+   GLASS CARDS
    ========================================================= */
 
 .glass-card {
@@ -1355,6 +1437,7 @@ body.light-theme .glass-card:hover {
   border-color: rgba(0, 0, 0, 0.15);
 }
 
+
 /* =========================================================
    SKILLS
    ========================================================= */
@@ -1379,10 +1462,7 @@ body.light-theme .glass-card:hover {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(130px, 1fr)
-    );
+    repeat(auto-fit, minmax(130px, 1fr));
 
   gap: 1.5rem;
 }
@@ -1441,6 +1521,7 @@ body.light-theme .skill-node {
   font-size: 0.9rem;
 }
 
+
 /* =========================================================
    TIMELINE
    ========================================================= */
@@ -1470,8 +1551,7 @@ body.light-theme .skill-node {
 
   background:
     linear-gradient(
-      to bottom,
-      var(--in-oklch),
+      to bottom var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
@@ -1508,8 +1588,7 @@ body.light-theme .skill-node {
 
   border: 3px solid var(--bg-base);
 
-  box-shadow:
-    0 0 10px var(--accent-1);
+  box-shadow: 0 0 10px var(--accent-1);
 
   z-index: 5;
 
@@ -1523,8 +1602,7 @@ body.light-theme .skill-node {
 
   background-color: var(--accent-2);
 
-  box-shadow:
-    0 0 15px var(--accent-2);
+  box-shadow: 0 0 15px var(--accent-2);
 }
 
 .timeline-date {
@@ -1562,6 +1640,7 @@ body.light-theme .skill-node {
 
   font-size: 1rem;
 }
+
 
 /* =========================================================
    PROJECT FILTER
@@ -1605,8 +1684,7 @@ body.light-theme .skill-node {
 .filter-btn.active {
   background:
     linear-gradient(
-      to right,
-      var(--in-oklch),
+      to right var(--in-oklch),
       var(--accent-1),
       var(--accent-2)
     );
@@ -1616,6 +1694,7 @@ body.light-theme .skill-node {
   border-color: transparent;
 }
 
+
 /* =========================================================
    PROJECTS
    ========================================================= */
@@ -1624,10 +1703,7 @@ body.light-theme .skill-node {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(320px, 1fr)
-    );
+    repeat(auto-fit, minmax(320px, 1fr));
 
   gap: 2.5rem;
 }
@@ -1737,6 +1813,7 @@ body.light-theme .skill-node {
 .project-link:hover {
   color: var(--accent-2);
 }
+
 
 /* =========================================================
    PROJECT DIALOG
@@ -1871,6 +1948,7 @@ dialog.project-dialog::backdrop {
   color: var(--text-muted);
 }
 
+
 /* =========================================================
    CONTACT
    ========================================================= */
@@ -1937,8 +2015,7 @@ body.light-theme .form-group textarea {
 .form-group textarea:focus {
   border-color: var(--accent-1);
 
-  box-shadow:
-    0 0 10px rgba(var(--accent-1), 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 .form-group input:user-valid,
@@ -1952,6 +2029,7 @@ body.light-theme .form-group textarea {
 
   border-style: dashed;
 }
+
 
 /* =========================================================
    SUCCESS OVERLAY
@@ -2008,6 +2086,7 @@ body.light-theme .form-group textarea {
 
   color: var(--accent-1);
 }
+
 
 /* =========================================================
    FOOTER
@@ -2078,8 +2157,9 @@ footer .container {
   transform: translateY(-2px);
 }
 
+
 /* =========================================================
-   TABLET
+   RESPONSIVE — 1120px
    ========================================================= */
 
 @media (max-width: 1120px) {
@@ -2087,6 +2167,11 @@ footer .container {
     display: none;
   }
 }
+
+
+/* =========================================================
+   RESPONSIVE — 968px
+   ========================================================= */
 
 @media (max-width: 968px) {
   :root {
@@ -2160,8 +2245,9 @@ footer .container {
   }
 }
 
+
 /* =========================================================
-   MOBILE
+   RESPONSIVE — 600px
    ========================================================= */
 
 @media (max-width: 600px) {
@@ -2237,9 +2323,7 @@ footer .container {
 
   .hero-cta {
     margin-top: 1rem;
-  }
 
-  .hero-cta {
     flex-direction: column;
 
     align-items: stretch;
@@ -2273,6 +2357,7 @@ footer .container {
     height: 2.75rem;
   }
 }
+
 
 /* =========================================================
    REDUCED MOTION
@@ -2309,24 +2394,4 @@ footer .container {
   #bg-canvas {
     display: none;
   }
-}
-
-/* =========================================================
-   PROJECT IMAGE FINAL
-   ========================================================= */
-
-.project-image {
-  border-radius: 16px;
-
-  overflow: hidden;
-}
-
-.project-image img {
-  width: 100%;
-
-  height: auto;
-
-  display: block;
-
-  border-radius: 16px;
 }
